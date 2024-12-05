@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter') {
+        exclude group: 'org.glassfish.jersey.core'
+        exclude group: 'org.glassfish.jersey.containers'
+        exclude group: 'org.glassfish.jersey.media'
+        exclude group: 'org.glassfish.jersey.ext'
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation('org.apache.spark:spark-core_2.12:3.5.0') {
+        exclude group: 'org.eclipse.jetty', module: 'jetty-server'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-util'
+    }
+    implementation 'org.apache.spark:spark-sql_2.12:3.5.0'
+    implementation 'redis.clients:jedis:4.2.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'com.redislabs:spark-redis:2.3.0'
+    implementation 'org.glassfish.jersey.containers:jersey-container-servlet:2.35' // Versión compatible
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+configurations.all {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'org.slf4j', module: 'slf4j-reload4j'
+    exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+    exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl'
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--add-opens'
+    jvmArgs += 'java.base/java.nio=ALL-UNNAMED'
+}
+
+test {
+    useJUnitPlatform()
+}
