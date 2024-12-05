@@ -24,6 +24,7 @@ dependencies {
         exclude group: 'org.glassfish.jersey.media'
         exclude group: 'org.glassfish.jersey.ext'
     }
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation('org.apache.spark:spark-core_2.12:3.5.0') {
         exclude group: 'org.eclipse.jetty', module: 'jetty-server'
