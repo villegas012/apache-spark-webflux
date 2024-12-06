@@ -29,6 +29,7 @@ public class SparkRedisService {
         // Guardar en Redis
         try (Jedis jedis = new Jedis("localhost", 6379)) {
             jedis.set("combinedJson", combinedJson);
+            System.out.println("Json combinado: " + combinedJson);
         }
     }
 }
