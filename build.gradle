@@ -34,7 +34,7 @@ dependencies {
     implementation 'redis.clients:jedis:4.2.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
-    implementation 'com.redislabs:spark-redis:2.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.glassfish.jersey.containers:jersey-container-servlet:2.35' // Versión compatible
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
