@@ -12,6 +12,8 @@ import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
 public class SparkRedisService {
 
@@ -26,29 +28,36 @@ public class SparkRedisService {
     public Mono<Void> processAndSaveJson(JsonNode[] jsons) {
         logger.info("processAndSaveJson: Inicio del método con {} JSONs.", jsons.length);
 
-        return Mono.fromCallable(() -> {
-                    logger.info("Comenzando combinación de JSONs.");
-                    JsonNode combinedNode = null;
+        try {
+            JsonNode combinedNode = null;
+            for (JsonNode currentNode : jsons) {
+                logger.debug("JSON actual: {}", currentNode);
+                combinedNode = combinedNode == null
+                        ? currentNode
+                        : JsonMergeHelper.merge(combinedNode, currentNode);
+                logger.debug("JSON combinado parcial: {}", combinedNode);
+            }
 
-                    for (JsonNode currentNode : jsons) {
-                        logger.debug("JSON actual: {}", currentNode);
-                        combinedNode = combinedNode == null
-                                ? currentNode
-                                : JsonMergeHelper.merge(combinedNode, currentNode);
-                        logger.debug("JSON combinado parcial: {}", combinedNode);
-                    }
+            String combinedJson = objectMapper.writeValueAsString(combinedNode);
+            logger.info("JSON combinado generado: {}", combinedJson);
 
-                    String combinedJson = objectMapper.writeValueAsString(combinedNode);
-                    logger.info("JSON combinado generado: {}", combinedJson);
-                    return combinedJson;
-                })
-                .flatMap(combinedJson -> {
-                    logger.info("Guardando JSON combinado en Redis con clave 'combinedJson'.");
-                    return reactiveRedisTemplate.opsForValue().set("combinedJson", combinedJson);
-                })
-                .doOnSuccess(success -> logger.info("JSON guardado exitosamente en Redis."))
-                .doOnError(e -> logger.error("Error durante el procesamiento del JSON.", e))
-                .then()
-                .doFinally(signal -> logger.info("processAndSaveJson: Fin del método con señal: {}", signal));
+            CompletableFuture<Void> future = new CompletableFuture<>();
+            reactiveRedisTemplate.opsForValue()
+                    .set("combinedJson", combinedJson)
+                    .doOnSuccess(aVoid -> {
+                        logger.info("JSON guardado exitosamente en Redis.");
+                        future.complete(null);
+                    })
+                    .doOnError(e -> {
+                        logger.error("Error durante el procesamiento del JSON.", e);
+                        future.completeExceptionally(e);
+                    }).subscribe();
+            future.get(); // Bloqueo para esperar la operación
+
+            return Mono.empty();
+        } catch (Exception e) {
+            logger.error("Error al procesar JSON en Redis.", e);
+            return Mono.error(new RuntimeException("Error al procesar JSON", e));
+        }
     }
 }
