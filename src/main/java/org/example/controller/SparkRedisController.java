@@ -12,6 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * Controlador REST para manejar operaciones relacionadas con Spark y Redis.
+ * Proporciona endpoints para combinar y guardar JSON en Redis y para recuperar valores de Redis.
+ */
 @RestController
 @RequestMapping("/api/spark-redis")
 public class SparkRedisController {
@@ -23,6 +27,12 @@ public class SparkRedisController {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    /**
+     * Endpoint para combinar y guardar JSON en Redis.
+     *
+     * @param jsons Array de objetos JSON a combinar y guardar.
+     * @return Mono con el resultado de la operación.
+     */
     @PostMapping("/merge")
     public Mono<String> mergeAndSaveJson(@RequestBody JsonNode[] jsons) {
         logger.info("Recibida solicitud para combinar y guardar JSON con {} elementos.", jsons.length);
@@ -42,7 +52,12 @@ public class SparkRedisController {
         }
     }
 
-
+    /**
+     * Endpoint para recuperar un valor de Redis por su clave.
+     *
+     * @param key La clave del valor a recuperar.
+     * @return Mono con el valor recuperado de Redis.
+     */
     @GetMapping("/redis/{key}")
     public Mono<String> getValue(@PathVariable String key) {
         return sparkRedisService.getValue(key);

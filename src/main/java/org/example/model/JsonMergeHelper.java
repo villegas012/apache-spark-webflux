@@ -5,34 +5,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-//public class JsonMergeHelper {
-//
-//    private static final ObjectMapper MAPPER = new ObjectMapper();
-//
-//    public static JsonNode merge(JsonNode mainNode, JsonNode updateNode) {
-//        ObjectNode merged = MAPPER.createObjectNode();
-//
-//        // Combinar campos de ambos JSON
-//        merged.setAll((ObjectNode) mainNode);
-//        merged.setAll((ObjectNode) updateNode);
-//
-//        // Combinar arrays manualmente
-//        if (mainNode.has("phoneNumbers") && updateNode.has("phoneNumbers")) {
-//            ArrayNode phoneNumbers = MAPPER.createArrayNode();
-//            phoneNumbers.addAll((ArrayNode) mainNode.get("phoneNumbers"));
-//            phoneNumbers.addAll((ArrayNode) updateNode.get("phoneNumbers"));
-//            merged.set("phoneNumbers", phoneNumbers);
-//        }
-//
-//        return merged;
-//    }
-//}
 
-
+/**
+ * Helper para la combinación de objetos JSON.
+ * Proporciona métodos para combinar nodos JSON y arrays JSON.
+ */
 public class JsonMergeHelper {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    /**
+     * Combina dos nodos JSON.
+     *
+     * @param mainNode El nodo JSON principal.
+     * @param updateNode El nodo JSON con las actualizaciones.
+     * @return Un nuevo nodo JSON que resulta de la combinación de los dos nodos.
+     */
     public static JsonNode merge(JsonNode mainNode, JsonNode updateNode) {
         ObjectNode merged = MAPPER.createObjectNode();
         merged.setAll((ObjectNode) mainNode);
@@ -59,6 +47,13 @@ public class JsonMergeHelper {
         return merged;
     }
 
+    /**
+     * Combina dos arrays JSON.
+     *
+     * @param mainArray El array JSON principal.
+     * @param updateArray El array JSON con las actualizaciones.
+     * @return Un nuevo array JSON que resulta de la combinación de los dos arrays.
+     */
     private static ArrayNode combineArrays(ArrayNode mainArray, ArrayNode updateArray) {
         ArrayNode combinedArray = MAPPER.createArrayNode();
         combinedArray.addAll(mainArray);

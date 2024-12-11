@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Servicio para manejar operaciones relacionadas con Spark y Redis.
+ * Proporciona métodos para procesar y guardar JSON en Redis y para recuperar valores de Redis.
+ */
 @Service
 public class SparkRedisService {
 
@@ -25,6 +29,12 @@ public class SparkRedisService {
     @Autowired
     private ReactiveRedisTemplate<String, String> reactiveRedisTemplate;
 
+    /**
+     * Procesa y guarda un array de JSON en Redis.
+     *
+     * @param jsons Array de objetos JSON a combinar y guardar.
+     * @return Mono<Void> que indica la finalización de la operación.
+     */
     public Mono<Void> processAndSaveJson(JsonNode[] jsons) {
         logger.info("processAndSaveJson: Inicio del método con {} JSONs.", jsons.length);
 
@@ -61,6 +71,12 @@ public class SparkRedisService {
         }
     }
 
+    /**
+     * Recupera un valor de Redis por su clave.
+     *
+     * @param key La clave del valor a recuperar.
+     * @return Mono<String> con el valor recuperado de Redis.
+     */
     public Mono<String> getValue(String key) {
         return reactiveRedisTemplate.opsForValue()
                 .get(key)
