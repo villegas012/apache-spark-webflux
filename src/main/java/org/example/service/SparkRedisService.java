@@ -60,4 +60,11 @@ public class SparkRedisService {
             return Mono.error(new RuntimeException("Error al procesar JSON", e));
         }
     }
+
+    public Mono<String> getValue(String key) {
+        return reactiveRedisTemplate.opsForValue()
+                .get(key)
+                .doOnSuccess(value -> logger.info("Valor recuperado exitosamente de Redis para la clave: {}", key))
+                .doOnError(error -> logger.error("Error al recuperar valor de Redis", error));
+    }
 }

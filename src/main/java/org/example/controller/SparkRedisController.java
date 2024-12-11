@@ -3,10 +3,7 @@ package org.example.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.example.service.SparkRedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,5 +40,11 @@ public class SparkRedisController {
             logger.error("Error al procesar y guardar JSON en Redis.", e);
             return Mono.just("Error al procesar JSON: " + e.getMessage());
         }
+    }
+
+
+    @GetMapping("/redis/{key}")
+    public Mono<String> getValue(@PathVariable String key) {
+        return sparkRedisService.getValue(key);
     }
 }
